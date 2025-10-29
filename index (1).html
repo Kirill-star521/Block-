@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Block Blast</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 150, 255, 0.5);
+            color: #4cc9f0;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 20px;
+            background: rgba(0, 30, 60, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .score-container, .level-container {
+            text-align: center;
+        }
+
+        .score, .level {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #4cc9f0;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            grid-gap: 2px;
+            background-color: #0d1b2a;
+            padding: 5px;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0, 100, 200, 0.3);
+        }
+
+        .cell {
+            width: 40px;
+            height: 40px;
+            background-color: #1b263b;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+        }
+
+        .cell.filled {
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        #reset-btn {
+            background: linear-gradient(135deg, #f72585 0%, #b5179e 100%);
+        }
+
+        .next-blocks {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .next-block {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 2px;
+            background-color: rgba(13, 27, 42, 0.7);
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .next-cell {
+            width: 20px;
+            height: 20px;
+            border-radius: 2px;
+        }
+
+        .instructions {
+            margin-top: 20px;
+            background: rgba(0, 30, 60, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .instructions h2 {
+            color: #4cc9f0;
+            margin-bottom: 10px;
+        }
+
+        .instructions p {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 600px) {
+            .cell {
+                width: 30px;
+                height: 30px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            button {
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Block Blast</h1>
+        <p>Собирайте блоки одного цвета, чтобы очистить поле и заработать очки!</p>
+    </header>
+
+    <div class="game-info">
+        <div class="score-container">
+            <div>Счет</div>
+            <div class="score" id="score">0</div>
+        </div>
+        <div class="level-container">
+            <div>Уровень</div>
+            <div class="level" id="level">1</div>
+        </div>
+    </div>
+
+    <div class="game-container">
+        <div class="game-board" id="game-board">
+            <!-- Игровое поле будет сгенерировано JavaScript -->
+        </div>
+
+        <div class="controls">
+            <button id="reset-btn">Новая игра</button>
+            <button id="hint-btn">Подсказка</button>
+        </div>
+
+        <div class="next-blocks">
+            <div class="next-block" id="next-block-1">
+                <!-- Следующий блок 1 -->
+            </div>
+            <div class="next-block" id="next-block-2">
+                <!-- Следующий блок 2 -->
+            </div>
+            <div class="next-block" id="next-block-3">
+                <!-- Следующий блок 3 -->
+            </div>
+        </div>
+    </div>
+
+    <div class="instructions">
+        <h2>Как играть:</h2>
+        <p>• Кликайте на группы из 2+ смежных блоков одного цвета</p>
+        <p>• Чем больше блоков в группе, тем больше очков вы получите</p>
+        <p>• Очистите все поле, чтобы перейти на следующий уровень</p>
+        <p>• Используйте кнопку "Подсказка", если не можете найти ход</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const gameBoard = document.getElementById('game-board');
+            const scoreElement = document.getElementById('score');
+            const levelElement = document.getElementById('level');
+            const resetButton = document.getElementById('reset-btn');
+            const hintButton = document.getElementById('hint-btn');
+            const nextBlocks = [
+                document.getElementById('next-block-1'),
+                document.getElementById('next-block-2'),
+                document.getElementById('next-block-3')
+            ];
+
+            // Константы игры
+            const BOARD_SIZE = 10;
+            const COLORS = ['#f72585', '#7209b7', '#3a0ca3', '#4361ee', '#4cc9f0', '#06d6a0'];
+            const MIN_GROUP_SIZE = 2;
+            
+            // Переменные состояния игры
+            let board = [];
+            let score = 0;
+            let level = 1;
+            let nextBlockColors = [];
+            let isGameActive = true;
+            let hintTimeout = null;
+
+            // Инициализация игры
+            function initGame() {
+                createBoard();
+                generateNextBlocks();
+                updateDisplay();
+                isGameActive = true;
+            }
+
+            // Создание игрового поля
+            function createBoard() {
+                gameBoard.innerHTML = '';
+                board = [];
+                
+                for (let row = 0; row < BOARD_SIZE; row++) {
+                    board[row] = [];
+                    for (let col = 0; col < BOARD_SIZE; col++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'cell';
+                        cell.dataset.row = row;
+                        cell.dataset.col = col;
+                        
+                        // Случайный цвет для начального заполнения
+                        const colorIndex = Math.floor(Math.random() * COLORS.length);
+                        board[row][col] = colorIndex;
+                        cell.style.backgroundColor = COLORS[colorIndex];
+                        cell.classList.add('filled');
+                        
+                        cell.addEventListener('click', () => handleCellClick(row, col));
+                        gameBoard.appendChild(cell);
+                    }
+                }
+            }
+
+            // Генерация следующих блоков
+            function generateNextBlocks() {
+                nextBlockColors = [];
+                for (let i = 0; i < 3; i++) {
+                    const colorIndex = Math.floor(Math.random() * COLORS.length);
+                    nextBlockColors.push(colorIndex);
+                    renderNextBlock(i, colorIndex);
+                }
+            }
+
+            // Отображение следующего блока
+            function renderNextBlock(index, colorIndex) {
+                nextBlocks[index].innerHTML = '';
+                const shape = generateBlockShape();
+                
+                for (let row = 0; row < 3; row++) {
+                    for (let col = 0; col < 3; col++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'next-cell';
+                        
+                        if (shape[row][col]) {
+                            cell.style.backgroundColor = COLORS[colorIndex];
+                        } else {
+                            cell.style.backgroundColor = 'transparent';
+                        }
+                        
+                        nextBlocks[index].appendChild(cell);
+                    }
+                }
+            }
+
+            // Генерация формы блока (случайная форма 3x3)
+            function generateBlockShape() {
+                const shapes = [
+                    [[1,1,0], [0,1,1], [0,0,0]],
+                    [[1,1,1], [0,1,0], [0,0,0]],
+                    [[1,1,1], [1,0,0], [0,0,0]],
+                    [[1,1,0], [1,1,0], [0,0,0]],
+                    [[0,1,0], [1,1,1], [0,1,0]],
+                    [[1,0,0], [1,1,1], [0,0,0]]
+                ];
+                
+                return shapes[Math.floor(Math.random() * shapes.length)];
+            }
+
+            // Обработка клика по ячейке
+            function handleCellClick(row, col) {
+                if (!isGameActive) return;
+                
+                const colorIndex = board[row][col];
+                if (colorIndex === -1) return; // Пустая ячейка
+                
+                const group = findConnectedGroup(row, col, colorIndex);
+                
+                if (group.length >= MIN_GROUP_SIZE) {
+                    removeGroup(group);
+                    applyGravity();
+                    updateDisplay();
+                    
+                    // Проверка на завершение уровня
+                    if (isBoardEmpty()) {
+                        levelUp();
+                    }
+                    
+                    // Проверка на возможность ходов
+                    if (!hasValidMoves()) {
+                        endGame();
+                    }
+                }
+            }
+
+            // Поиск связанной группы блоков одного цвета
+            function findConnectedGroup(startRow, startCol, colorIndex, visited = new Set()) {
+                const key = `${startRow},${startCol}`;
+                if (visited.has(key)) return [];
+                visited.add(key);
+                
+                let group = [{row: startRow, col: startCol}];
+                
+                // Проверка соседних ячеек
+                const directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+                
+                for (const [dr, dc] of directions) {
+                    const newRow = startRow + dr;
+                    const newCol = startCol + dc;
+                    
+                    if (newRow >= 0 && newRow < BOARD_SIZE && 
+                        newCol >= 0 && newCol < BOARD_SIZE && 
+                        board[newRow][newCol] === colorIndex) {
+                        
+                        group = group.concat(findConnectedGroup(newRow, newCol, colorIndex, visited));
+                    }
+                }
+                
+                return group;
+            }
+
+            // Удаление группы блоков
+            function removeGroup(group) {
+                // Начисление очков: чем больше группа, тем больше очков
+                const points = group.length * group.length * 10;
+                score += points;
+                
+                // Удаление блоков
+                for (const {row, col} of group) {
+                    board[row][col] = -1;
+                }
+            }
+
+            // Применение гравитации - блоки падают вниз
+            function applyGravity() {
+                for (let col = 0; col < BOARD_SIZE; col++) {
+                    let emptySpaces = 0;
+                    
+                    // Проходим снизу вверх
+                    for (let row = BOARD_SIZE - 1; row >= 0; row--) {
+                        if (board[row][col] === -1) {
+                            emptySpaces++;
+                        } else if (emptySpaces > 0) {
+                            // Перемещаем блок вниз
+                            board[row + emptySpaces][col] = board[row][col];
+                            board[row][col] = -1;
+                        }
+                    }
+                }
+            }
+
+            // Проверка, пусто ли поле
+            function isBoardEmpty() {
+                for (let row = 0; row < BOARD_SIZE; row++) {
+                    for (let col = 0; col < BOARD_SIZE; col++) {
+                        if (board[row][col] !== -1) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+
+            // Проверка наличия возможных ходов
+            function hasValidMoves() {
+                for (let row = 0; row < BOARD_SIZE; row++) {
+                    for (let col = 0; col < BOARD_SIZE; col++) {
+                        if (board[row][col] !== -1) {
+                            const group = findConnectedGroup(row, col, board[row][col]);
+                            if (group.length >= MIN_GROUP_SIZE) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+
+            // Переход на следующий уровень
+            function levelUp() {
+                level++;
+                createBoard();
+                generateNextBlocks();
+            }
+
+            // Завершение игры
+            function endGame() {
+                isGameActive = false;
+                alert(`Игра окончена! Ваш счет: ${score}`);
+            }
+
+            // Обновление отображения
+            function updateDisplay() {
+                // Обновление игрового поля
+                for (let row = 0; row < BOARD_SIZE; row++) {
+                    for (let col = 0; col < BOARD_SIZE; col++) {
+                        const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+                        
+                        if (board[row][col] === -1) {
+                            cell.style.backgroundColor = '#1b263b';
+                            cell.classList.remove('filled');
+                        } else {
+                            cell.style.backgroundColor = COLORS[board[row][col]];
+                            cell.classList.add('filled');
+                        }
+                    }
+                }
+                
+                // Обновление счета и уровня
+                scoreElement.textContent = score;
+                levelElement.textContent = level;
+            }
+
+            // Подсказка
+            function showHint() {
+                if (!isGameActive) return;
+                
+                // Находим первую доступную группу
+                for (let row = 0; row < BOARD_SIZE; row++) {
+                    for (let col = 0; col < BOARD_SIZE; col++) {
+                        if (board[row][col] !== -1) {
+                            const group = findConnectedGroup(row, col, board[row][col]);
+                            if (group.length >= MIN_GROUP_SIZE) {
+                                // Подсвечиваем группу
+                                for (const {row: r, col: c} of group) {
+                                    const cell = document.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+                                    cell.style.boxShadow = '0 0 10px 3px gold';
+                                }
+                                
+                                // Убираем подсветку через 2 секунды
+                                if (hintTimeout) clearTimeout(hintTimeout);
+                                hintTimeout = setTimeout(() => {
+                                    for (const {row: r, col: c} of group) {
+                                        const cell = document.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+                                        cell.style.boxShadow = '';
+                                    }
+                                }, 2000);
+                                
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Обработчики событий
+            resetButton.addEventListener('click', () => {
+                score = 0;
+                level = 1;
+                initGame();
+            });
+
+            hintButton.addEventListener('click', showHint);
+
+            // Запуск игры
+            initGame();
+        });
+    </script>
+</body>
+</html>
+<style>
+
+</style>
+<script>
+
+</script>
